@@ -1,6 +1,5 @@
-package com.service.iscon.vcr.Activities;
+package com.service.iscon.vcr.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -9,48 +8,59 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 
-import com.service.iscon.vcr.Handler.MyDBHelper;
-import com.service.iscon.vcr.Model.UserInfo;
+import com.service.iscon.vcr.handler.MyDBHelper;
+import com.service.iscon.vcr.model.UserInfo;
 import com.service.iscon.vcr.R;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MyProfileActivity extends AppCompatActivity {
 
-    EditText et_email,et_full_name,et_contact,et_city;
+    @BindView(R.id.et_email)
+    EditText mEmail;
+
+    @BindView(R.id.et_full_name)
+    EditText mFullName;
+
+    @BindView(R.id.et_contact)
+    EditText mContact;
+
+    @BindView(R.id.et_city)
+    EditText mCity;
+
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_profile);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        et_email=(EditText)findViewById(R.id.et_email);
-        et_full_name=(EditText)findViewById(R.id.et_full_name);
-        et_contact=(EditText)findViewById(R.id.et_contact);
-        et_city=(EditText)findViewById(R.id.et_city);
+        ButterKnife.bind(this);
 
         MyDBHelper db = new MyDBHelper(this);
         UserInfo mUserInfo = db.getUserInfo();
 
         if(mUserInfo.getEmail()!=null){
-            et_email.setText(mUserInfo.getEmail());
+            mEmail.setText(mUserInfo.getEmail());
         }
         if(mUserInfo.getFullName()!=null){
-            et_full_name.setText(mUserInfo.getFullName());
+            mFullName.setText(mUserInfo.getFullName());
         }
 
         if(mUserInfo.getMobile()!=null){
-            et_contact.setText(mUserInfo.getMobile());
+            mContact.setText(mUserInfo.getMobile());
         }
         /*if(mUserInfo.getEmail()!=null){
-            et_city.setText(mUserInfo.getEmail());
+            mCity.setText(mUserInfo.getEmail());
         }
 */
-        et_email.setEnabled(false);
-        et_full_name.setEnabled(false);
-        et_contact.setEnabled(false);
-        et_city.setEnabled(false);
+        mEmail.setEnabled(false);
+        mFullName.setEnabled(false);
+        mContact.setEnabled(false);
+        mCity.setEnabled(false);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+       // FloatingActionButton mFloatingActionButton = (FloatingActionButton) findViewById(R.id.mFloatingActionButton);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

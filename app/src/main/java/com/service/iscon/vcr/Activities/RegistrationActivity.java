@@ -1,4 +1,4 @@
-package com.service.iscon.vcr.Activities;
+package com.service.iscon.vcr.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -32,26 +32,53 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.service.iscon.vcr.Constants.ValidationPatternConstants;
-import com.service.iscon.vcr.Controller.UserInfoController;
-import com.service.iscon.vcr.Handler.MyDBHelper;
-import com.service.iscon.vcr.Helper.AsyncProcessListener;
-import com.service.iscon.vcr.Model.UserInfo;
+import com.service.iscon.vcr.controller.UserInfoController;
+import com.service.iscon.vcr.handler.MyDBHelper;
+import com.service.iscon.vcr.helper.AsyncProcessListener;
+import com.service.iscon.vcr.model.UserInfo;
 import com.service.iscon.vcr.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 import static android.Manifest.permission.READ_CONTACTS;
 
 public class RegistrationActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    EditText etName, etMobile, etPassword;
-    Button btnSignUp;
-    private AutoCompleteTextView mEmailView;
     private static final int REQUEST_READ_CONTACTS = 0;
-    private View mProgressView;
-    private View mLoginFormView;
-    private ImageView imgLogoreg;
+
+    @BindView(R.id.imgLogoreg)
+    ImageView imgLogoreg;
+
+    @BindView(R.id.et_reg_name)
+    EditText mName;
+
+    @BindView(R.id.et_reg_mobile)
+    EditText mMobile;
+
+    @BindView(R.id.et_reg_password)
+    EditText mPassword;
+
+    @BindView(R.id.btn_reg_sign_up)
+    Button mSignUpButton;
+
+    @BindView(R.id.et_reg_email)
+    AutoCompleteTextView mEmailView;
+
+    @BindView(R.id.registration_form)
+    View mLoginFormView;
+
+    @BindView(R.id.registration_progress)
+    View mProgressView;
+
+    @OnClick(R.id.btn_reg_sign_up)
+    void signUpButtonClick() {
+        attemptRegistration();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +86,11 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
         setContentView(R.layout.activity_registration);
         initView();
         populateAutoComplete();
+        ButterKnife.bind(this);
     }
 
     private void initView() {
-        imgLogoreg = (ImageView) findViewById(R.id.imgLogoreg);
-        etName = (EditText) findViewById(R.id.et_reg_name);
-        etMobile = (EditText) findViewById(R.id.et_reg_mobile);
-        etPassword = (EditText) findViewById(R.id.et_reg_password);
-        btnSignUp = (Button) findViewById(R.id.btn_reg_sign_up);
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.et_reg_email);
-        etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.registration || id == EditorInfo.IME_NULL) {
@@ -78,14 +100,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
                 return false;
             }
         });
-        btnSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptRegistration();
-            }
-        });
-        mLoginFormView = findViewById(R.id.registration_form);
-        mProgressView = findViewById(R.id.registration_progress);
+
         Drawable drawable = AppCompatDrawableManager.get().getDrawable(getApplicationContext(), R.drawable.ic_filter_vintage_black_24dp);
         imgLogoreg.setImageDrawable(drawable);
     }
@@ -93,15 +108,15 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
     private void attemptRegistration() {
 // Reset errors.
         mEmailView.setError(null);
-        etPassword.setError(null);
-        etName.setError(null);
-        etMobile.setError(null);
+        mPassword.setError(null);
+        mName.setError(null);
+        mMobile.setError(null);
 
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
-        String password = etPassword.getText().toString();
-        String name = etName.getText().toString();
-        String mobile = etMobile
+        String password = mPassword.getText().toString();
+        String name = mName.getText().toString();
+        String mobile = mMobile
                 .getText().toString();
 
         boolean cancel = false;
@@ -109,8 +124,8 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
 
         // Check for a valid name, if the user entered one.
         if (!TextUtils.isEmpty(name) && !isNameValid(name)) {
-            etName.setError(getString(R.string.error_invalid_name));
-            focusView = etName;
+            mName.setError(getString(R.string.error_invalid_name));
+            focusView = mName;
             cancel = true;
         }
 
@@ -118,20 +133,20 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
         {
         // Check for a valid Mobile, if the user entered one.
        // if (!TextUtils.isEmpty(mobile) && !isMobileValid(mobile) ) {
-            etMobile.setError(getString(R.string.error_invalid_name));
-            focusView = etMobile;
+            mMobile.setError(getString(R.string.error_invalid_name));
+            focusView = mMobile;
             cancel = true;
         }
 
 
         // Check for a valid password, if the user entered one.
         if (TextUtils.isEmpty(password)) {
-            etPassword.setError(getString(R.string.error_field_required));
-            focusView = etPassword;
+            mPassword.setError(getString(R.string.error_field_required));
+            focusView = mPassword;
             cancel = true;
         } else if (!isPasswordValid(password)) {
-            etPassword.setError(getString(R.string.error_invalid_password));
-            focusView = etPassword;
+            mPassword.setError(getString(R.string.error_invalid_password));
+            focusView = mPassword;
             cancel = true;
         }
 

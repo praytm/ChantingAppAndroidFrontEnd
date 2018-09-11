@@ -5,12 +5,12 @@ android {
         config {
             keyAlias 'ivcr'
             keyPassword 'harekrishna'
-            storeFile file('F:\\2. SuSh\\VCRMAIN\\KEYPrayTM/ivcr.jks')
+            //storeFile file('F:\\2. SuSh\\VCRMAIN\\KEYPrayTM/ivcr.jks')
             storePassword 'harekrishna'
         }
     }
     compileSdkVersion 24
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '26.0.2'
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.service.iscon.vcr"
@@ -65,5 +65,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-plus:10.0.1'
     //compile 'com.github.barteksc:android-pdf-viewer:2.0.3'
     testCompile 'junit:junit:4.12'
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 }
 apply plugin: 'com.google.gms.google-services'

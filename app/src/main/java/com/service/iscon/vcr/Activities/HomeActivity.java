@@ -1,4 +1,4 @@
-package com.service.iscon.vcr.Activities;
+package com.service.iscon.vcr.activities;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -6,6 +6,7 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -30,100 +31,109 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.codemybrainsout.ratingdialog.RatingDialog;
-import com.service.iscon.vcr.Controller.UserInfoController;
-import com.service.iscon.vcr.Handler.MyDBHelper;
-import com.service.iscon.vcr.Helper.AsyncProcessListener;
-import com.service.iscon.vcr.Model.SessionModel;
-import com.service.iscon.vcr.Model.UserInfo;
-import com.service.iscon.vcr.Model.UserStatistics;
+import com.service.iscon.vcr.controller.UserInfoController;
+import com.service.iscon.vcr.db.DatabaseManager;
+import com.service.iscon.vcr.db.QueryExecutor;
+import com.service.iscon.vcr.handler.MyDBHelper;
+import com.service.iscon.vcr.helper.AsyncProcessListener;
+import com.service.iscon.vcr.model.SessionModel;
+import com.service.iscon.vcr.model.UserInfo;
+import com.service.iscon.vcr.model.UserStatistics;
 import com.service.iscon.vcr.R;
-import com.service.iscon.vcr.Reminder.Notification_reciver;
+import com.service.iscon.vcr.reminder.Notification_reciver;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
-    TextView nav_name, nav_total_round, nav_last_login;
-    TextView tv_total_user, tv_total_active_user, tv_todays_beads, tv_todays_round, tv_todays_count,tv_todays_quote;
+    TextView mNavigation_Name, mTotalChantRounds, mLastLogin;
     SessionModel currentSession;
-    LinearLayout ll_chanting;
-    ImageView btn_add_count,btn_chant_sound,imageViewProfile;
-    Button btn_start_finish_chant;
+
     int currentCount = 0;
-    UserStatistics US=new UserStatistics();
+    UserStatistics US = new UserStatistics();
     static MediaPlayer mPlayer;
     boolean userActive=false;
     String compareDate;
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
     String currentDate,date;
-   // LinearLayout ll_quote;
+
+
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+
+    @BindView(R.id.nav_view)
+    NavigationView mNavigationView;
+
+    @BindView(R.id.total_user)
+    TextView mTotalUser;
+
+    @BindView(R.id.todays_quote)
+    TextView mTodaysQuote;
+
+    @BindView(R.id.total_active_user)
+    TextView mTotalActiveUser;
+
+    @BindView(R.id.todays_beads)
+    TextView mTodaysBeads;
+
+    @BindView(R.id.todays_round)
+    TextView mTodaysRound;
+
+    @BindView(R.id.todays_count)
+    TextView mTodaysCount;
+
+    @BindView(R.id.ll_chanting)
+    LinearLayout ll_chanting;
+
+    @BindView(R.id.btn_start_finish_chant)
+    Button mBtnStartStopChant;
+
+    @BindView(R.id.btn_add_count)
+    ImageView mAddChantCount;
+
+    @BindView(R.id.btn_chant_sound)
+    ImageView mChantSound;
+
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        View header = navigationView.getHeaderView(0);
+        ButterKnife.bind(this);
+        setSupportActionBar(mToolbar);
+        mNavigationView.setNavigationItemSelectedListener(this);
+        View header = mNavigationView.getHeaderView(0);
 
-        nav_name = (TextView) header.findViewById(R.id.nav_name);
-        nav_total_round = (TextView) header.findViewById(R.id.nav_total_round);
-        nav_last_login = (TextView) header.findViewById(R.id.nav_last_login);
+        mNavigation_Name = (TextView) header.findViewById(R.id.nav_name);
+        mTotalChantRounds = (TextView) header.findViewById(R.id.nav_total_round);
+        mLastLogin = (TextView) header.findViewById(R.id.nav_last_login);
 
-        tv_total_user = (TextView) findViewById(R.id.total_user);
-        tv_todays_quote = (TextView) findViewById(R.id.todays_quote);
-        tv_total_active_user = (TextView) findViewById(R.id.total_active_user);
-        tv_todays_beads = (TextView) findViewById(R.id.todays_beads);
-        tv_todays_round = (TextView) findViewById(R.id.todays_round);
-        tv_todays_count = (TextView) findViewById(R.id.todays_count);
-        ll_chanting = (LinearLayout) findViewById(R.id.ll_chanting);
-       // ll_quote= (LinearLayout) findViewById(R.id.ll_quote);
-     //   ll_quote.setVisibility(View.GONE);
-        ll_chanting.setVisibility(View.GONE);
-        imageViewProfile  = (ImageView) findViewById(R.id.imageView);
-//        Uri uri=Uri.parse(LoginActivity.ProfileImage);
-        //      imageViewProfile.setImageURI(uri);
-        btn_start_finish_chant = (Button) findViewById(R.id.btn_start_finish_chant);
-        btn_start_finish_chant.setOnClickListener(this);
-        btn_add_count=(ImageView)findViewById(R.id.btn_add_count);
-        btn_add_count.setOnClickListener(this);
-        btn_chant_sound=(ImageView)findViewById(R.id.btn_chant_sound);
-        btn_chant_sound.setOnClickListener(this);
+        mBtnStartStopChant.setOnClickListener(this);
+        mAddChantCount.setOnClickListener(this);
+        mChantSound.setOnClickListener(this);
 
-        // Set Image
-        Drawable drawable = AppCompatDrawableManager.get().getDrawable(getApplicationContext(), R.drawable.ic_add_circle_blue_24dp);
-        btn_add_count.setImageDrawable(drawable);
+        mAddChantCount.setImageDrawable(AppCompatDrawableManager.get().getDrawable(this, R.drawable.ic_add_circle_blue_24dp));
+        mChantSound.setImageDrawable(AppCompatDrawableManager.get().getDrawable(this, R.drawable.ic_volume_up_24dp));
 
-        // Set Image
-        Drawable drawable1 = AppCompatDrawableManager.get().getDrawable(getApplicationContext(), R.drawable.ic_volume_up_24dp);
-        btn_chant_sound.setImageDrawable(drawable1);
-
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+                this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.setDrawerListener(toggle);
         toggle.syncState();
-
+        //TODO Change My DB HELPER
         MyDBHelper db = new MyDBHelper(HomeActivity.this);
         UserInfo mUserInfo = db.getUserInfo();
         if (mUserInfo != null) {
             if (mUserInfo.getFullName() != null)
-                nav_name.setText(mUserInfo.getFullName());
+                mNavigation_Name.setText(mUserInfo.getFullName());
             if (mUserInfo.getLastLogin() != null)
-                nav_last_login.setText("Last Login: " + mUserInfo.getLastLogin().replace("T", " at "));
+                mLastLogin.setText("Last Login: " + mUserInfo.getLastLogin().replace("T", " at "));
         }
 
         getRefreshedData(true);
@@ -170,7 +180,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     UserInfo AuthenticatedUser = (UserInfo) Result;
                     Toast.makeText(HomeActivity.this, "Welcome :" + AuthenticatedUser.getDailyQuote().toString(), Toast.LENGTH_SHORT).show();
                     Log.d("dates are not equal", "" + AuthenticatedUser.getDailyQuote().toString());
-                    tv_todays_quote.setText("Quote of the Day \n" + AuthenticatedUser.getDailyQuote().toString());
+                    mTodaysQuote.setText("Quote of the Day \n" + AuthenticatedUser.getDailyQuote().toString());
                     compareDate=currentDate;
                     editor.putString("newcompareDate", compareDate);
                     editor.apply();
@@ -189,7 +199,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         {
             if(currentDate.equalsIgnoreCase(date)){
                 Log.d("both dates are equal","");
-                tv_todays_quote.setVisibility(View.GONE);
+                mTodaysQuote.setVisibility(View.GONE);
             }
             else if(!currentDate.equalsIgnoreCase(date)){
                 UserInfoController UIC = UserInfoController.GetDailyQuote(HomeActivity.this, mUserInfo);
@@ -202,11 +212,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void ProcessFinished(Object Result) {
                         // Toast.makeText(HomeActivity.this, Result.toString(), Toast.LENGTH_SHORT).show();
-                        tv_todays_quote.setVisibility(View.VISIBLE);
+                        mTodaysQuote.setVisibility(View.VISIBLE);
                         UserInfo AuthenticatedUser = (UserInfo) Result;
                         Toast.makeText(HomeActivity.this, "Welcome :" + AuthenticatedUser.getDailyQuote().toString(), Toast.LENGTH_SHORT).show();
                         Log.d("dates are not equal", "" + AuthenticatedUser.getDailyQuote().toString());
-                        tv_todays_quote.setText(AuthenticatedUser.getDailyQuote().toString());
+                        mTodaysQuote.setText(AuthenticatedUser.getDailyQuote().toString());
 
                         showQuote(AuthenticatedUser);
 
@@ -372,7 +382,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             public void ProcessFinished(Object Result) {
                 Toast.makeText(HomeActivity.this, "Chanting Saved.", Toast.LENGTH_SHORT).show();
 
-                btn_start_finish_chant.setText("Start Chant");
+                mBtnStartStopChant.setText("Start Chant");
                 currentCount = 0;
                 getRefreshedData(false);
             }
@@ -381,7 +391,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             public void ProcessFailed(Exception E) { //Chanting Session Not Saved
                 String Resp = E.getMessage();
                 Toast.makeText(HomeActivity.this, Resp, Toast.LENGTH_SHORT).show();
-                btn_start_finish_chant.setText("Start Chant");
+                mBtnStartStopChant.setText("Start Chant");
                 currentCount = 0;
                 refreshUI(US);
             }
@@ -417,26 +427,26 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void refreshUI(UserStatistics mUS) {
-        tv_total_user.setText("" + mUS.getTotalUser());
-        tv_total_active_user.setText("" + mUS.getTotalActiveUser());
-        tv_todays_round.setText("" + (mUS.getTodaysBeads() / 108));
-        tv_todays_beads.setText("" + (mUS.getTodaysBeads()));
-        nav_total_round.setText("Total Rounds : " + (mUS.getTotalBeads() / 108));
+        mTotalUser.setText("" + mUS.getTotalUser());
+        mTotalActiveUser.setText("" + mUS.getTotalActiveUser());
+        mTodaysRound.setText("" + (mUS.getTodaysBeads() / 108));
+        mTodaysBeads.setText("" + (mUS.getTodaysBeads()));
+        mTotalChantRounds.setText("Total Rounds : " + (mUS.getTotalBeads() / 108));
     }
 
     @Override
     public void onClick(View v) {
-        tv_todays_quote.setVisibility(View.GONE);
+        mTodaysQuote.setVisibility(View.GONE);
       //  ll_quote.setVisibility(View.GONE);
 
-        if (v == btn_start_finish_chant) {
+        if (v == mBtnStartStopChant) {
             MyDBHelper db = new MyDBHelper(HomeActivity.this);
 
 
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Calendar c;
-            if (btn_start_finish_chant.getText().equals("Start Chant")) {
-                btn_start_finish_chant.setText("Finish Chant");
+            if (mBtnStartStopChant.getText().equals("Start Chant")) {
+                mBtnStartStopChant.setText("Finish Chant");
                 activateUser();
                 ll_chanting.setVisibility(View.VISIBLE);
                 c = Calendar.getInstance();
@@ -445,11 +455,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 currentSession=new SessionModel();
                 currentSession.setDate(sessiondate);
                 currentSession.setStartTime(sessiondate);
-                tv_todays_count.setText(""+currentCount);
+                mTodaysCount.setText(""+currentCount);
 
-            } else if (btn_start_finish_chant.getText().equals("Finish Chant")) {
+            } else if (mBtnStartStopChant.getText().equals("Finish Chant")) {
                 ll_chanting.setVisibility(View.GONE);
-                btn_start_finish_chant.setText("Submitting count..");
+                mBtnStartStopChant.setText("Submitting count..");
                 c = Calendar.getInstance();
                 String sessiondate = format.format(c.getTime());
                 sessiondate=sessiondate.replace(" ","T");
@@ -458,20 +468,20 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 saveChantSession();
                 //  mPlayer.stop();
             }
-        }else if(v==btn_add_count){
+        }else if(v== mAddChantCount){
             currentCount++;
-            tv_todays_count.setText(""+currentCount);
+            mTodaysCount.setText(""+currentCount);
             int beadint=(currentCount)+(US.getTodaysBeads());
 
-            tv_todays_beads.setText("" + beadint);
+            mTodaysBeads.setText("" + beadint);
             Log.d("beads count: ", "" + beadint);
 
-        }else if(v==btn_chant_sound){
+        }else if(v== mChantSound){
             try {
                 //When Om chant is not playing
                 if (mPlayer==null || !mPlayer.isPlaying()) {
                     //Set button background image as 'Pause'
-                    btn_chant_sound.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.ic_volume_off_24dp));
+                    mChantSound.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.ic_volume_off_24dp));
                     //Create MediaPlayer object with raw resource 'om.mp3'
                     mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.srila_prabhupada_japa);
                     //Start playing mp3
@@ -482,7 +492,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     //When Om chant is playing
                     if (mPlayer != null && mPlayer.isPlaying()) {
                         //Set button background image as 'Play'
-                        btn_chant_sound.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.ic_volume_up_24dp));
+                        mChantSound.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.ic_volume_up_24dp));
                         //Stop playing om.mp3
                         mPlayer.stop();
                     }
@@ -504,6 +514,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void activateUser() {
+        //DatabaseManager manager= DatabaseManager.getInstance();
+        //SQLiteDatabase db=manager.openDatabase();
+        //QueryExecutor qe = new QueryExecutor();
 
         MyDBHelper db = new MyDBHelper(HomeActivity.this);
         UserInfo mUserInfo = db.getUserInfo();

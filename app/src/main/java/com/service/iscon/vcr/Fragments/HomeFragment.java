@@ -1,4 +1,4 @@
-package com.service.iscon.vcr.Fragments;
+package com.service.iscon.vcr.fragments;
 
 import android.content.Context;
 import android.net.Uri;

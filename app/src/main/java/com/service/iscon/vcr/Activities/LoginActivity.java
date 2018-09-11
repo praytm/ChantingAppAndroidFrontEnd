@@ -1,17 +1,14 @@
-package com.service.iscon.vcr.Activities;
+package com.service.iscon.vcr.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-import com.google.android.gms.plus.model.people.Person;
 
 import android.content.CursorLoader;
 import android.content.Loader;
@@ -23,7 +20,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.widget.AppCompatDrawableManager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -41,17 +37,13 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.service.iscon.vcr.Controller.UserInfoController;
-import com.service.iscon.vcr.Handler.MyDBHelper;
-import com.service.iscon.vcr.Handler.UserDB;
-import com.service.iscon.vcr.Helper.AsyncProcessListener;
-import com.service.iscon.vcr.Model.UserInfo;
+import com.service.iscon.vcr.controller.UserInfoController;
+import com.service.iscon.vcr.handler.MyDBHelper;
+import com.service.iscon.vcr.helper.AsyncProcessListener;
+import com.service.iscon.vcr.model.UserInfo;
 import com.service.iscon.vcr.R;
-import com.service.iscon.vcr.googleSignIn.GooglePlusSignInHelper;
-import com.service.iscon.vcr.googleSignIn.GoogleResponseListener;
 
 import java.util.ArrayList;
 import java.util.List;

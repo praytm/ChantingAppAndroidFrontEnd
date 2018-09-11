@@ -1,4 +1,4 @@
-package com.service.iscon.vcr.Activities;
+package com.service.iscon.vcr.activities;
 
 
 import android.annotation.TargetApi;

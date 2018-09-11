@@ -1,4 +1,4 @@
-package com.service.iscon.vcr.Handler;
+package com.service.iscon.vcr.handler;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.service.iscon.vcr.Model.UserInfo;
+import com.service.iscon.vcr.model.UserInfo;
 
 import java.util.ArrayList;
 import java.util.List;

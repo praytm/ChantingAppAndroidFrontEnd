@@ -1,4 +1,4 @@
-package com.service.iscon.vcr.Activities;
+package com.service.iscon.vcr.activities;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,13 +9,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.service.iscon.vcr.Adapter.SessionHistoryAdapter;
-import com.service.iscon.vcr.Controller.SessionController;
-import com.service.iscon.vcr.Handler.MyDBHelper;
-import com.service.iscon.vcr.Helper.AsyncProcessListener;
-import com.service.iscon.vcr.Helper.Comparator.SessionHistoryComapator;
-import com.service.iscon.vcr.Model.SessionModel;
-import com.service.iscon.vcr.Model.UserInfo;
+import com.service.iscon.vcr.adapter.SessionHistoryAdapter;
+import com.service.iscon.vcr.controller.SessionController;
+import com.service.iscon.vcr.handler.MyDBHelper;
+import com.service.iscon.vcr.helper.AsyncProcessListener;
+import com.service.iscon.vcr.helper.Comparator.SessionHistoryComapator;
+import com.service.iscon.vcr.model.SessionModel;
+import com.service.iscon.vcr.model.UserInfo;
 import com.service.iscon.vcr.R;
 
 import java.util.ArrayList;

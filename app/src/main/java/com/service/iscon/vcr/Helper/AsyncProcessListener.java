@@ -1,4 +1,4 @@
-package com.service.iscon.vcr.Helper;
+package com.service.iscon.vcr.helper;
 
 /**
  * Created by vinod on 10/4/2015.

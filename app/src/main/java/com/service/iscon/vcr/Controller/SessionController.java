@@ -1,14 +1,12 @@
-package com.service.iscon.vcr.Controller;
+package com.service.iscon.vcr.controller;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import com.service.iscon.vcr.Constants.WebServiceConstants;
-import com.service.iscon.vcr.Helper.AsyncProcess;
-import com.service.iscon.vcr.Helper.AsyncProcessListener;
-import com.service.iscon.vcr.Model.SessionModel;
-import com.service.iscon.vcr.Model.UserInfo;
-import com.service.iscon.vcr.Utils.NetUtils;
+import com.service.iscon.vcr.helper.AsyncProcess;
+import com.service.iscon.vcr.helper.AsyncProcessListener;
+import com.service.iscon.vcr.model.SessionModel;
+import com.service.iscon.vcr.utils.NetUtils;
 
 import org.json.JSONObject;
 

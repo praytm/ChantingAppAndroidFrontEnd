@@ -1,4 +1,4 @@
-package com.service.iscon.vcr.Utils;
+package com.service.iscon.vcr.utils;
 
 import android.app.Activity;
 import android.app.Application;
@@ -16,11 +16,9 @@ import android.view.WindowManager.BadTokenException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHttpResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 

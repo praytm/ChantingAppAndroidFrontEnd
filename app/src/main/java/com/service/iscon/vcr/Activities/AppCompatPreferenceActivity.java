@@ -1,4 +1,4 @@
-package com.service.iscon.vcr.Activities;
+package com.service.iscon.vcr.activities;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

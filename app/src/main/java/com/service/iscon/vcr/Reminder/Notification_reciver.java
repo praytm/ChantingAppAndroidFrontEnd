@@ -1,4 +1,4 @@
-package com.service.iscon.vcr.Reminder;
+package com.service.iscon.vcr.reminder;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,7 +9,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
-import com.service.iscon.vcr.Activities.HomeActivity;
+import com.service.iscon.vcr.activities.HomeActivity;
 import com.service.iscon.vcr.R;
 
 /**

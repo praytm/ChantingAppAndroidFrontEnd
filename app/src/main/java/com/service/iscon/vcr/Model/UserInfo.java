@@ -1,4 +1,4 @@
-package com.service.iscon.vcr.Model;
+package com.service.iscon.vcr.model;
 
 import android.util.Log;
 

@@ -1,4 +1,4 @@
-package com.service.iscon.vcr.Adapter;
+package com.service.iscon.vcr.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.service.iscon.vcr.Model.SessionModel;
+import com.service.iscon.vcr.model.SessionModel;
 import com.service.iscon.vcr.R;
 
 import java.util.List;
@@ -54,24 +54,9 @@ public class SessionHistoryAdapter  extends RecyclerView.Adapter<SessionHistoryA
     public void onBindViewHolder(MyViewHolder holder, int position) {
         SessionModel sessionModel = SessionList.get(position);
         holder.date.setText(""+sessionModel.getDateInIST());
-        // holder.title.setText(""+sessionModel.getDateInISTFormat2());
-//        holder.genre.setText(sessionModel.getStartTimeInIST());
         holder.beads.setText("Beads: "+String.valueOf(sessionModel.getBeads()));
         holder.round.setText("Rounds: "+String.valueOf(sessionModel.getBeads()/108));
-  /*      switch(position % 4){
-            case 0:holder.icon.setColorFilter(ContextCompat.getColor(mContext,R.color.colorAccent), android.graphics.PorterDuff.Mode.MULTIPLY);
-                break;
-            case 1:holder.icon.setColorFilter(ContextCompat.getColor(mContext,R.color.colorGray), android.graphics.PorterDuff.Mode.MULTIPLY);
-                break;
-            case 2: holder.icon.setColorFilter(ContextCompat.getColor(mContext,R.color.colorGreen), android.graphics.PorterDuff.Mode.MULTIPLY);
-                break;
-            case 3:  holder.icon.setColorFilter(ContextCompat.getColor(mContext,R.color.colorRed), android.graphics.PorterDuff.Mode.MULTIPLY);
-                break;
-            case 4: break;
-            case 5: break;
-            case 6: break;
-            case 7: break;
-        }*/
+
 
     }
 

@@ -1,6 +1,6 @@
-package com.service.iscon.vcr.Helper.Comparator;
+package com.service.iscon.vcr.helper.Comparator;
 
-import com.service.iscon.vcr.Model.SessionModel;
+import com.service.iscon.vcr.model.SessionModel;
 import java.util.Comparator;
 /**
  * Created by priyanka on 25-03-2017.

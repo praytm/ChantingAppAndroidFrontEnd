@@ -1,5 +1,5 @@
 
-package com.service.iscon.vcr.Model;
+package com.service.iscon.vcr.model;
 
 import java.io.Serializable;
 import java.text.ParseException;

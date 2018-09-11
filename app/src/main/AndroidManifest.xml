@@ -11,6 +11,7 @@
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
 
     <application
+        android:name=".ChantingApplication"
         android:hardwareAccelerated="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_tilak"
@@ -18,13 +19,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Activities.HomeActivity"
+            android:name=".activities.HomeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
 
             />
         <activity
-            android:name=".Activities.LoginActivity"
+            android:name=".activities.LoginActivity"
             android:label="@string/title_activity_login"
             android:launchMode="singleInstance">
             <intent-filter>
@@ -33,27 +34,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.RegistrationActivity" />
+        <activity android:name=".activities.RegistrationActivity" />
         <activity
-            android:name=".Activities.SettingsActivity"
+            android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
-            android:name=".Activities.AboutActivity"
+            android:name=".activities.AboutActivity"
             android:label="About Chant" />
         <activity
-            android:name=".Activities.SessionHistoryActivity"
+            android:name=".activities.SessionHistoryActivity"
             android:label="@string/title_activity_session_history"
             android:theme="@style/AppTheme.NoActionBar"
             />
         <activity
-            android:name=".Activities.ProfileActivity"
+            android:name=".activities.ProfileActivity"
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.NoActionBar"
 
             />
-        <receiver android:name=".Reminder.Notification_reciver"/>
+        <receiver android:name=".reminder.Notification_reciver"/>
         <activity
-            android:name=".Activities.MyProfileActivity"
+            android:name=".activities.MyProfileActivity"
             android:label="@string/title_activity_my_profile"></activity>
     </application>
 

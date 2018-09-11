@@ -1,4 +1,4 @@
-package com.service.iscon.vcr.Utils;
+package com.service.iscon.vcr.utils;
 
 import android.content.Context;
 
