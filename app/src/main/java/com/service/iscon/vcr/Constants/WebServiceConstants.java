@@ -7,6 +7,7 @@ package com.service.iscon.vcr.Constants;
 public final class WebServiceConstants {
 
     public static String BaseUrl="https://104.236.243.12/";
+    //public static String BaseUrl="http://192.168.137.1:8080/";
     //UAT server
 
     public static String ServiceUrl = BaseUrl+"chantingapprest-0.0.1-SNAPSHOT/rest/user/";
@@ -20,6 +21,9 @@ public final class WebServiceConstants {
     public static String UserLogin = ServiceUrl + "login";
     public static String DailyQuote = ServiceUrl + "activate";
 
+    //private static binding
+    public static String totalTodaysBeadsCount="";
+    public static String DailyTarget="";
 
     public static String UserRegister = ServiceUrl + "register";
     public static String ChantingHistory = ServiceUrl + "get_chanting_history";
@@ -27,6 +31,8 @@ public final class WebServiceConstants {
     public static String RefreshHome= ServiceUrl + "refresh_home";
     public static String ActivateUser= ServiceUrl + "activate";
     public static String DeActivateUser= ServiceUrl + "deactivate";
+    public static String TotalBeadsForToday = BaseUrl+"chantingapprest-0.0.1-SNAPSHOT/rest/getTotalBeadsForToday";
+    public static String getGetDailyTargetCount = BaseUrl+"chantingapprest-0.0.1-SNAPSHOT/rest/getDailyTarget";
     /****************************************
      * FCM
      ************************************/

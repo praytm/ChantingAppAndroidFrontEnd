@@ -95,7 +95,7 @@ public class UserInfoController {
 
     private AsyncProcessListener<Object> OnDeActivateUser;
 
-    public static UserInfoController AuthenticateUser(final Context Ctx, final String email, final String password) {
+    public static UserInfoController AuthenticateUser(final Context Ctx, final String email, final String password,boolean isRegisteredByGoogle) {
 
         final UserInfoController UIC = new UserInfoController();
 
@@ -138,53 +138,57 @@ public class UserInfoController {
                     }
                     String technicalStatus = JO.getString("technicalStatus");
                     int responseCode = JO.getInt("responseCode");
-                    if (technicalStatus.equals("SUCCESS")) {
-                        switch (responseCode) {
-                            case 0: //Login Success
-                                if (!JO.isNull("user")) {
-                                    JSONObject JOUser = JO.getJSONObject("user");
-                                    UserInfo UI = new UserInfo();
+                    //if (technicalStatus.equals("SUCCESS")) {
+                    switch (responseCode) {
+                        case 0: //Login Success
+                            if (!JO.isNull("user")) {
+                                JSONObject JOUser = JO.getJSONObject("user");
+                                UserInfo UI = new UserInfo();
 
-                                    if (!JOUser.isNull("userId")) {
-                                        UI.setId(JOUser.getInt("userId"));
-                                    }
-
-                                    if (!JOUser.isNull("name")) {
-                                        UI.setFullName(JOUser.getString("name"));
-                                    }
-
-                                    if (!JOUser.isNull("createdDate")) {
-                                        UI.setCreatedDate(JOUser.getString("createdDate"));
-                                    }
-                                    if (!JOUser.isNull("lastLoginDate")) {
-                                        UI.setLastLogin(JOUser.getString("lastLoginDate"));
-                                    }
-
-                                    if (!JOUser.isNull("email")) {
-                                        UI.setEmail(JOUser.getString("email"));
-                                    }
-                                    if (!JOUser.isNull("mobile")) {
-                                        UI.setMobile(JOUser.getString("mobile"));
-                                    }
-
-                                    if (!JOUser.isNull("password")) {
-                                        UI.setPassword(JOUser.getString("password"));
-                                    } else {
-                                        UI.setPassword(password);
-                                    }
-
-                                    return UI;
+                                if (!JOUser.isNull("userId")) {
+                                    UI.setId(JOUser.getInt("userId"));
                                 }
-                                break;
-                            case 1:
-                                return "Wrong Password";
-                            case 2:
-                                return "Email id not found";
-                            case 11:
-                                return "Technical error found";
-                        }
-                        return "INVALID SERVICE RESPONSE";
+
+                                if (!JOUser.isNull("name")) {
+                                    UI.setFullName(JOUser.getString("name"));
+                                }
+
+                                if (!JOUser.isNull("createdDate")) {
+                                    UI.setCreatedDate(JOUser.getString("createdDate"));
+                                }
+                                if (!JOUser.isNull("lastLoginDate")) {
+                                    UI.setLastLogin(JOUser.getString("lastLoginDate"));
+                                }
+
+                                if (!JOUser.isNull("email")) {
+                                    UI.setEmail(JOUser.getString("email"));
+                                }
+                                if (!JOUser.isNull("mobile")) {
+                                    UI.setMobile(JOUser.getString("mobile"));
+                                }
+                                if (!JOUser.isNull("profilepic")) {
+                                    UI.setProfilePic(JOUser.getString("profilepic"));
+                                }
+
+                                if (!JOUser.isNull("password")) {
+                                    UI.setPassword(JOUser.getString("password"));
+                                } else {
+                                    UI.setPassword(password);
+                                }
+
+                                return UI;
+                            }
+                            break;
+                        case 1:
+                            return "Wrong Password";
+                        case 2:
+                            return "Email id not found";
+                        case 10:
+                            return "Technical error found";
                     }
+                    //  return "INVALID SERVICE RESPONSE";
+                    //
+                    // }
 
                 } catch (Exception ex) {
                     return ex.getMessage();
@@ -208,7 +212,7 @@ public class UserInfoController {
         return UIC;
     }
 
-    public static UserInfoController RegisterUser(final Context Ctx, final UserInfo UI) {
+    public static UserInfoController RegisterUser(final Context Ctx, final UserInfo UI, String isRegisteredViaGoogle) {
 
         final UserInfoController UIC = new UserInfoController();
 
@@ -231,8 +235,11 @@ public class UserInfoController {
             HT.put("mobile", UI.getMobile());
         if (!TextUtils.isEmpty(UI.getFullName()))
             HT.put("name", UI.getFullName());
+        HT.put("googleAuthToken",UI.getGoogleAuthToken());
+        HT.put("profilepic",UI.getProfilePic());
+        //HT.put("profilePic","https://lh3.googleusercontent.com/-UGapVoMB9Hw/AAAAAAAAAAI/AAAAAAAAAAA/APUIFaNIxSm7SWwhYogYhs_whNS7RWAy2Q/s96-c/photo.jpg");
         final String json = getJsonOf(HT);
-
+        System.out.println("***json***"+json);
         //final UserInfo UI = new UserInfo();
 
         AsyncProcess AP = new AsyncProcess(Ctx, "Requesting Authentication") {
@@ -244,10 +251,14 @@ public class UserInfoController {
                 //String Response = "{\"error\":\"0\",\"user\": {\"name\": \"Shrinath Tamada\",\"email\": \"shri@gmail.com\",\"mobile\": \"9898989898\",\"last_login\": \"2015-09-17 13:26:16\"}}";
                 //String Response = "{\"technicalStatus\":\"SUCCESS\",\"responseCode\":\"0\",\"tag\":\"registration\",\"user\":{\"userId\":\"5\",\"name\":\""+UI.getFullName()+"\",\"createdDate\":\"2017-02-10T23:21:22\",\"lastLoginDate\":\"2017-02-12T13:26:16\",\"email\":\""+UI.getEmail()+"\",\"password\":null,\"mobile\":\""+UI.getMobile()+"\"}}";
 
+                System.out.println("******"+Response);
+
                 JSONObject JO = null;
                 try {
+
                     JO = new JSONObject(Response);
                 } catch (Exception ex) {
+                    System.out.println("---------------"+ex.getMessage());
                     return "INVALID SERVICE RESPONSE";
                 }
 
@@ -286,7 +297,9 @@ public class UserInfoController {
                                     if (!JOUser.isNull("mobile")) {
                                         UI.setMobile(JOUser.getString("mobile"));
                                     }
-
+                                    if (!JOUser.isNull("profilepic")) {
+                                        UI.setProfilePic(JOUser.getString("profilepic"));
+                                    }
                                     if (!JOUser.isNull("password")) {
                                         UI.setPassword(JOUser.getString("password"));
                                     } else {
@@ -397,7 +410,7 @@ public class UserInfoController {
                                 return ischantingSessionSaved;
                             case 1:
                                 return "Authentication failed.";
-                            case 11:
+                            case 10:
                                 return "Technical error found";
                         }
                         return "INVALID SERVICE RESPONSE";
@@ -492,7 +505,7 @@ public class UserInfoController {
                                 break;
                             case 1:
                                 return "Wrong Credentials";
-                            case 11:
+                            case 10:
                                 return "Technical error found";
                         }
                         return "INVALID SERVICE RESPONSE";
@@ -585,7 +598,7 @@ public class UserInfoController {
                                 break;
                             case 1:
                                 return "Wrong Credentials";
-                            case 11:
+                            case 10:
                                 return "Technical error found";
                         }
                         return "INVALID SERVICE RESPONSE";
@@ -669,7 +682,7 @@ public class UserInfoController {
                                 break;
                             case 1:
                                 return "Wrong Credentials";
-                            case 11:
+                            case 10:
                                 return "Technical error found";
                         }
                         return "INVALID SERVICE RESPONSE";
@@ -750,7 +763,7 @@ public class UserInfoController {
 
                             case 1:
                                 return "Wrong Credentials";
-                            case 11:
+                            case 10:
                                 return "Technical error found";
                         }
                         return "INVALID SERVICE RESPONSE";
@@ -760,6 +773,94 @@ public class UserInfoController {
                     return ex.getMessage();
                 }
                 return "INVALID SERVICE RESPONSE";
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                super.onPostExecute(o);
+                if (UIC.getOnDailyQuote() != null) {
+                    if (o.getClass() == UserInfo.class) {
+                        UIC.getOnDailyQuote().ProcessFinished(o);
+                    } else {
+                        UIC.getOnDailyQuote().ProcessFailed(new Exception(o.toString()));
+                    }
+                }
+            }
+        };
+        AP.set_ShowProgress(false);
+        AP.execute();
+        return UIC;
+    }
+
+    public static UserInfoController getTotalBeadsForToday(final Context Ctx, final UserInfo UI) {
+
+        final UserInfoController UIC = new UserInfoController();
+
+        if (!NetUtils.IsInternet(Ctx, true)) {
+            if (UIC.getOnDailyQuote()!= null) {
+                UIC.getOnDailyQuote().ProcessFailed(new Exception("Internet Not Available"));
+                return UIC;
+            } else {
+                return null;
+            }
+        }
+
+        //Collecting Values to Pass
+        final HashMap<String, String> HT = new HashMap<>();
+        HT.put("email", UI.getEmail());
+        HT.put("password", UI.getPassword());
+        final String json = getJsonOf(HT);
+
+        AsyncProcess AP = new AsyncProcess(Ctx, "Updating Status..") {
+            @Override
+            protected Object doInBackground(Object... params) {
+                String Response = NetUtils.PostWebServiceMethodforDotNet(Ctx, WebServiceConstants.TotalBeadsForToday, json);
+
+                UserInfo UI = new UserInfo();
+                UI.setTotalTodaysBeadsCount(Response);
+                WebServiceConstants.totalTodaysBeadsCount = Response;
+                return UI;
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                super.onPostExecute(o);
+                if (UIC.getOnDailyQuote() != null) {
+                    if (o.getClass() == UserInfo.class) {
+                        UIC.getOnDailyQuote().ProcessFinished(o);
+                    } else {
+                        UIC.getOnDailyQuote().ProcessFailed(new Exception(o.toString()));
+                    }
+                }
+            }
+        };
+        AP.set_ShowProgress(false);
+        AP.execute();
+        return UIC;
+    }
+
+    public static UserInfoController getDailyTargetCount(final Context Ctx, final UserInfo UI) {
+
+        final UserInfoController UIC = new UserInfoController();
+
+        if (!NetUtils.IsInternet(Ctx, true)) {
+            if (UIC.getOnDailyQuote()!= null) {
+                UIC.getOnDailyQuote().ProcessFailed(new Exception("Internet Not Available"));
+                return UIC;
+            } else {
+                return null;
+            }
+        }
+
+        AsyncProcess AP = new AsyncProcess(Ctx, "Updating Status..") {
+            @Override
+            protected Object doInBackground(Object... params) {
+                String Response = NetUtils.PostWebServiceMethodforDotNet(Ctx, WebServiceConstants.getGetDailyTargetCount, "DAILY_TARGET");
+
+                UserInfo UI = new UserInfo();
+                UI.setDailyTarget(Response);
+                WebServiceConstants.DailyTarget = Response;
+                return UI;
             }
 
             @Override

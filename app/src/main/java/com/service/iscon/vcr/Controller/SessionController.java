@@ -1,13 +1,11 @@
 package com.service.iscon.vcr.Controller;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import com.service.iscon.vcr.Constants.WebServiceConstants;
 import com.service.iscon.vcr.Helper.AsyncProcess;
 import com.service.iscon.vcr.Helper.AsyncProcessListener;
 import com.service.iscon.vcr.Model.SessionModel;
-import com.service.iscon.vcr.Model.UserInfo;
 import com.service.iscon.vcr.Utils.NetUtils;
 
 import org.json.JSONObject;
@@ -56,7 +54,7 @@ public class SessionController {
         HTJ.put("userDto", json);
         //HT.put("dateInput","");
         final String finaljson = getJsonOfHTJ(HTJ);
-        AsyncProcess AP = new AsyncProcess(Ctx, "Requesting Authentication") {
+        AsyncProcess AP = new AsyncProcess(Ctx, "Loading your data...") {
             @Override
             protected Object doInBackground(Object... params) {
                 String Response = NetUtils.PostWebServiceMethodforDotNet(Ctx, WebServiceConstants.ChantingHistory, finaljson);

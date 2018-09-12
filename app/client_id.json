@@ -1,13 +1,1 @@
-{
-	"installed": {
-		"client_id": "111697933657-7oo45jea5vgkrjkbb05ulkoj9obiep16.apps.googleusercontent.com",
-		"project_id": "ivcrapp",
-		"auth_uri": "https://accounts.google.com/o/oauth2/auth",
-		"token_uri": "https://accounts.google.com/o/oauth2/token",
-		"auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-		"redirect_uris": [
-			"urn:ietf:wg:oauth:2.0:oob",
-			"http://localhost"
-		]
-	}
-}
+{"installed":{"client_id":"739836156316-k85jdf3d0emk5v3ts99gop2s89s3gj8r.apps.googleusercontent.com","project_id":"ivcr-195508","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://accounts.google.com/o/oauth2/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}}

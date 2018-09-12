@@ -32,7 +32,7 @@ public class Notification_reciver extends BroadcastReceiver {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setContentIntent(pendingIntent)
-                .setSmallIcon(R.mipmap.ic_praytm)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("Notify For Chant")
                 .setContentText("Hare Krishna It's Time to Chant")
                 .setSound(sound)

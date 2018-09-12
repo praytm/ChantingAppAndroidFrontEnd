@@ -5,27 +5,27 @@
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <!--<uses-permission android:name="android.permission.READ_CONTACTS" />-->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
 
     <application
-        android:hardwareAccelerated="true"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_tilak"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".Activities.HomeActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-
-            />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.LoginActivity"
             android:label="@string/title_activity_login"
+            android:screenOrientation="portrait"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,28 +33,40 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.RegistrationActivity" />
+
+        <activity android:name=".Activities.RegistrationActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Activities.SettingsActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_settings"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Activities.AboutActivity"
-            android:label="About Chant" />
+            android:label="About Chant"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Activities.SessionHistoryActivity"
             android:label="@string/title_activity_session_history"
             android:theme="@style/AppTheme.NoActionBar"
-            />
-        <activity
-            android:name=".Activities.ProfileActivity"
-            android:label="@string/title_activity_profile"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
 
-            />
-        <receiver android:name=".Reminder.Notification_reciver"/>
+        <receiver android:name=".Reminder.Notification_reciver" />
+
         <activity
             android:name=".Activities.MyProfileActivity"
-            android:label="@string/title_activity_my_profile"></activity>
+            android:label="@string/title_activity_my_profile"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".Activities.OfflineChantActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_offline_chant"></activity>
+
+<!--        <activity
+                android:name=".Activities.WelcomeActivity"
+                android:theme="@style/AppTheme"
+                android:screenOrientation="portrait">
+        </activity>-->
     </application>
 
 </manifest>

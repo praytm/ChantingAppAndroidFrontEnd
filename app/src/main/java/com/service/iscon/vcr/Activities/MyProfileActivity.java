@@ -1,12 +1,7 @@
 package com.service.iscon.vcr.Activities;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.EditText;
 
 import com.service.iscon.vcr.Handler.MyDBHelper;
@@ -20,8 +15,10 @@ public class MyProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_my_profile);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //toolbar.setVisibility(View.GONE);
 
         et_email=(EditText)findViewById(R.id.et_email);
         et_full_name=(EditText)findViewById(R.id.et_full_name);
@@ -50,13 +47,6 @@ public class MyProfileActivity extends AppCompatActivity {
         et_contact.setEnabled(false);
         et_city.setEnabled(false);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Contact us to update your details.", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
     }
 }

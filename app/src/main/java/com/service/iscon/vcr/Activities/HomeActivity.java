@@ -1,6 +1,8 @@
 package com.service.iscon.vcr.Activities;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
@@ -30,6 +32,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.codemybrainsout.ratingdialog.RatingDialog;
+import com.service.iscon.vcr.Constants.WebServiceConstants;
 import com.service.iscon.vcr.Controller.UserInfoController;
 import com.service.iscon.vcr.Handler.MyDBHelper;
 import com.service.iscon.vcr.Helper.AsyncProcessListener;
@@ -58,7 +61,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
     String currentDate,date;
-   // LinearLayout ll_quote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,22 +83,23 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         tv_todays_round = (TextView) findViewById(R.id.todays_round);
         tv_todays_count = (TextView) findViewById(R.id.todays_count);
         ll_chanting = (LinearLayout) findViewById(R.id.ll_chanting);
-       // ll_quote= (LinearLayout) findViewById(R.id.ll_quote);
-     //   ll_quote.setVisibility(View.GONE);
+        // ll_quote= (LinearLayout) findViewById(R.id.ll_quote);
+        //   ll_quote.setVisibility(View.GONE);
         ll_chanting.setVisibility(View.GONE);
         imageViewProfile  = (ImageView) findViewById(R.id.imageView);
+
 //        Uri uri=Uri.parse(LoginActivity.ProfileImage);
         //      imageViewProfile.setImageURI(uri);
         btn_start_finish_chant = (Button) findViewById(R.id.btn_start_finish_chant);
         btn_start_finish_chant.setOnClickListener(this);
-        btn_add_count=(ImageView)findViewById(R.id.btn_add_count);
-        btn_add_count.setOnClickListener(this);
+        //btn_add_count=(ImageView)findViewById(R.id.btn_add_count);
+        //btn_add_count.setOnClickListener(this);
         btn_chant_sound=(ImageView)findViewById(R.id.btn_chant_sound);
         btn_chant_sound.setOnClickListener(this);
 
         // Set Image
-        Drawable drawable = AppCompatDrawableManager.get().getDrawable(getApplicationContext(), R.drawable.ic_add_circle_blue_24dp);
-        btn_add_count.setImageDrawable(drawable);
+        /*Drawable drawable = AppCompatDrawableManager.get().getDrawable(getApplicationContext(), R.drawable.ic_add_circle_blue_24dp);
+        btn_add_count.setImageDrawable(drawable);*/
 
         // Set Image
         Drawable drawable1 = AppCompatDrawableManager.get().getDrawable(getApplicationContext(), R.drawable.ic_volume_up_24dp);
@@ -124,6 +127,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 nav_name.setText(mUserInfo.getFullName());
             if (mUserInfo.getLastLogin() != null)
                 nav_last_login.setText("Last Login: " + mUserInfo.getLastLogin().replace("T", " at "));
+            System.out.println("url is" + mUserInfo.getProfilePic());
         }
 
         getRefreshedData(true);
@@ -168,7 +172,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     // Toast.makeText(HomeActivity.this, Result.toString(), Toast.LENGTH_SHORT).show();
 
                     UserInfo AuthenticatedUser = (UserInfo) Result;
-                    Toast.makeText(HomeActivity.this, "Welcome :" + AuthenticatedUser.getDailyQuote().toString(), Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(HomeActivity.this, "Welcome :" + AuthenticatedUser.getDailyQuote().toString(), Toast.LENGTH_SHORT).show();
                     Log.d("dates are not equal", "" + AuthenticatedUser.getDailyQuote().toString());
                     tv_todays_quote.setText("Quote of the Day \n" + AuthenticatedUser.getDailyQuote().toString());
                     compareDate=currentDate;
@@ -204,7 +208,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         // Toast.makeText(HomeActivity.this, Result.toString(), Toast.LENGTH_SHORT).show();
                         tv_todays_quote.setVisibility(View.VISIBLE);
                         UserInfo AuthenticatedUser = (UserInfo) Result;
-                        Toast.makeText(HomeActivity.this, "Welcome :" + AuthenticatedUser.getDailyQuote().toString(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(HomeActivity.this, "Welcome :" + AuthenticatedUser.getDailyQuote().toString(), Toast.LENGTH_SHORT).show();
                         Log.d("dates are not equal", "" + AuthenticatedUser.getDailyQuote().toString());
                         tv_todays_quote.setText(AuthenticatedUser.getDailyQuote().toString());
 
@@ -219,11 +223,116 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     }
                 });
             }
-
         }
+        showDialogForChantedTargetCount();
     }
 
+    // Showing that Total chant and Targeted Chant Count
+    private void showDialogForChantedTargetCount(){
 
+        MyDBHelper db = new MyDBHelper(HomeActivity.this);
+        final UserInfo mUserInfo = db.getUserInfo();
+
+        final UserInfoController UIC = UserInfoController.getTotalBeadsForToday(HomeActivity.this, mUserInfo);
+        final UserInfoController UIC1 = UserInfoController.getDailyTargetCount(HomeActivity.this, mUserInfo);
+        if (UIC == null || UIC1 == null) {
+            Log.e("Error", "UIC is null");
+            return;
+        }
+        //Handling Response of service
+        UIC.setOnActivateDaily(new AsyncProcessListener<Object>() {
+            @Override
+            public void ProcessFinished(final Object Result) {
+                // Toast.makeText(HomeActivity.this, Result.toString(), Toast.LENGTH_SHORT).show();
+                //WebServiceConstants.totalTodaysBeadsCount = Result.toString();
+                //Handling Response of service
+                UIC1.setOnActivateDaily(new AsyncProcessListener<Object>() {
+                    @Override
+                    public void ProcessFinished(Object Result1) {
+                        // Toast.makeText(HomeActivity.this, Result.toString(), Toast.LENGTH_SHORT).show();
+                        //WebServiceConstants.DailyTarget = Result1.toString();
+                        // custom dialog
+                        final Dialog dialog = new Dialog(HomeActivity.this);
+                        dialog.setContentView(R.layout.targatedchantcount_layout);
+
+                        // set the Rounds Count
+                        TextView text = (TextView) dialog.findViewById(R.id.tvRoundCount);
+                        int roundsCount = ConvertIntoNumeric(WebServiceConstants.totalTodaysBeadsCount);
+                        //text.setText(WebServiceConstants.totalTodaysBeadsCount);
+                        text.setText(""+roundsCount/108);
+
+                        // set the Target Count
+                        TextView text1 = (TextView) dialog.findViewById(R.id.tvTargetRoundsCount);
+                        int targetCount = ConvertIntoNumeric(WebServiceConstants.DailyTarget);
+                        text1.setText(""+targetCount);
+                        //text1.setText(WebServiceConstants.DailyTarget);
+
+                        ImageView image = (ImageView) dialog.findViewById(R.id.imageView2);
+                        image.setImageResource(R.drawable.chant);
+
+                        @SuppressLint("WrongViewCast") Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+                        // if button is clicked, close the custom dialog
+                        dialogButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        dialog.show();
+
+                    }
+
+                    @Override
+                    public void ProcessFailed(Exception E) {
+                        String Resp = E.getMessage();
+                        Toast.makeText(HomeActivity.this, Resp, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                // custom dialog
+                /*final Dialog dialog = new Dialog(HomeActivity.this);
+                dialog.setContentView(R.layout.targatedchantcount_layout);
+                dialog.setTitle("Chant Holy Name...");
+
+                // set the custom dialog components - text, image and button
+                TextView text = (TextView) dialog.findViewById(R.id.textView2);
+                text.setText(Result.toString());
+                ImageView image = (ImageView) dialog.findViewById(R.id.imageView2);
+                image.setImageResource(R.drawable.holy_festival);
+
+                @SuppressLint("WrongViewCast") Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+                // if button is clicked, close the custom dialog
+                dialogButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                dialog.show();*/
+
+            }
+
+            @Override
+            public void ProcessFailed(Exception E) {
+                String Resp = E.getMessage();
+                Toast.makeText(HomeActivity.this, Resp, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    //convert the string to number and habndle exception
+    private int ConvertIntoNumeric(String xVal)
+    {
+        try
+        {
+            return (int) Float.parseFloat(xVal);
+        }
+        catch(Exception ex)
+        {
+            return 0;
+        }
+    }
 
     @Override
     public void onBackPressed() {
@@ -240,13 +349,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             alertDialog.setMessage("Do you want to exit from PrayTM ?");
 
             // Setting Icon to Dialog
-            alertDialog.setIcon(R.mipmap.ic_praytm);
+            alertDialog.setIcon(R.mipmap.ic_launcher);
 
             // Setting Positive "Yes" Button
             alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     // User pressed YES button. Write Logic Here
-                    Toast.makeText(getApplicationContext(), "Thank You Hare Krishna", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Hare Krishna!", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             });
@@ -255,7 +364,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     // User pressed No button. Write Logic Here
-                    Toast.makeText(getApplicationContext(), "Hare Krishna Welcome To PrayTM ", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "Hare Krishna Welcome To PrayTM", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -277,6 +386,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 }).build();
 
         ratingDialog.show();
+
     }
 
    /* @Override
@@ -334,14 +444,46 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             // Reminder Set for selected Time For day and repeating every day on same Time
             reminderLogic();
         } else if (id == R.id.nav_sign_out) {
+
+            final Intent i2 = new Intent(this, LoginActivity.class);
+
             //clearing local storage
-            userActive=false;
-            deactivateUser();
-            MyDBHelper db = new MyDBHelper(this);
-            db.clearUser();
-            i = new Intent(this, LoginActivity.class);
-            startActivity(i);
-            finish();
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+
+            // Setting Dialog Title
+            alertDialog.setTitle("Logout");
+
+            // Setting Dialog Message
+            alertDialog.setMessage("Do you want to logout from PrayTM?");
+
+            // Setting Icon to Dialog
+            alertDialog.setIcon(R.mipmap.ic_launcher);
+
+            // Setting Positive "Yes" Button
+            alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // User pressed YES button. Write Logic Here
+                    Toast.makeText(getApplicationContext(), "Hare Krishna!", Toast.LENGTH_SHORT).show();
+                    // Showing Alert Message
+
+                    userActive=false;
+                    deactivateUser();
+                    MyDBHelper db = new MyDBHelper(HomeActivity.this);
+                    db.clearUser();
+                    startActivity(i2);
+                    finish();
+                }
+            });
+
+            // Setting Negative "NO" Button
+            alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // User pressed No button. Write Logic Here
+                    //Toast.makeText(getApplicationContext(), "Hare Krishna Welcome To PrayTM", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            alertDialog.show();
 
         }else if (id == R.id.nav_profile) {
             i = new Intent(this, MyProfileActivity.class);
@@ -352,7 +494,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-        return true;
+        return false;
     }
 
 
@@ -427,74 +569,95 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onClick(View v) {
         tv_todays_quote.setVisibility(View.GONE);
-      //  ll_quote.setVisibility(View.GONE);
+        //  ll_quote.setVisibility(View.GONE);
 
-        if (v == btn_start_finish_chant) {
-            MyDBHelper db = new MyDBHelper(HomeActivity.this);
+        switch (v.getId()){
+            case R.id.btn_start_finish_chant:
 
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                Calendar c;
+                if (btn_start_finish_chant.getText().equals("Start Chant")) {
+                    btn_start_finish_chant.setText("Finish Chant");
+                    activateUser();
+                    ll_chanting.setVisibility(View.VISIBLE);
+                    c = Calendar.getInstance();
+                    String sessiondate = format.format(c.getTime());
+                    sessiondate=sessiondate.replace(" ","T");
+                    currentSession=new SessionModel();
+                    currentSession.setDate(sessiondate);
+                    currentSession.setStartTime(sessiondate);
+                    tv_todays_count.setText(""+currentCount);
 
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            Calendar c;
-            if (btn_start_finish_chant.getText().equals("Start Chant")) {
-                btn_start_finish_chant.setText("Finish Chant");
-                activateUser();
-                ll_chanting.setVisibility(View.VISIBLE);
-                c = Calendar.getInstance();
-                String sessiondate = format.format(c.getTime());
-                sessiondate=sessiondate.replace(" ","T");
-                currentSession=new SessionModel();
-                currentSession.setDate(sessiondate);
-                currentSession.setStartTime(sessiondate);
-                tv_todays_count.setText(""+currentCount);
+                } else if (btn_start_finish_chant.getText().equals("Finish Chant")) {
+                    ll_chanting.setVisibility(View.GONE);
 
-            } else if (btn_start_finish_chant.getText().equals("Finish Chant")) {
-                ll_chanting.setVisibility(View.GONE);
-                btn_start_finish_chant.setText("Submitting count..");
-                c = Calendar.getInstance();
-                String sessiondate = format.format(c.getTime());
-                sessiondate=sessiondate.replace(" ","T");
-                currentSession.setEndTime(sessiondate);
-                currentSession.setBeads(currentCount);
-                saveChantSession();
-                //  mPlayer.stop();
-            }
-        }else if(v==btn_add_count){
-            currentCount++;
-            tv_todays_count.setText(""+currentCount);
-            int beadint=(currentCount)+(US.getTodaysBeads());
-
-            tv_todays_beads.setText("" + beadint);
-            Log.d("beads count: ", "" + beadint);
-
-        }else if(v==btn_chant_sound){
-            try {
-                //When Om chant is not playing
-                if (mPlayer==null || !mPlayer.isPlaying()) {
-                    //Set button background image as 'Pause'
-                    btn_chant_sound.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.ic_volume_off_24dp));
-                    //Create MediaPlayer object with raw resource 'om.mp3'
-                    mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.srila_prabhupada_japa);
-                    //Start playing mp3
-                    mPlayer.start();
-                    //Set player to be looping to continuously play om.mp3
-                    mPlayer.setLooping(true);
-                } else {
-                    //When Om chant is playing
                     if (mPlayer != null && mPlayer.isPlaying()) {
                         //Set button background image as 'Play'
                         btn_chant_sound.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.ic_volume_up_24dp));
+
                         //Stop playing om.mp3
                         mPlayer.stop();
                     }
+
+                    if(currentCount>0) {
+                        btn_start_finish_chant.setText("Submitting count..");
+                        c = Calendar.getInstance();
+                        String sessiondate = format.format(c.getTime());
+                        sessiondate = sessiondate.replace(" ", "T");
+                        currentSession.setEndTime(sessiondate);
+                        currentSession.setBeads(currentCount);
+                        saveChantSession();
+                    }else{
+                        btn_start_finish_chant.setText("Start Chant");
+                    }
+                    //  mPlayer.stop();
                 }
-            } catch (IllegalStateException e) {
-                // TODO Auto-generated catch block
-                //  Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                //    Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
-            }
+                break;
+
+         /*   case R.id.btn_add_count:
+               increaseChantCount(btn_add_count);
+                break;*/
+
+            case R.id.btn_chant_sound:
+                try {
+                    //When Om chant is not playing
+                    if (mPlayer==null || !mPlayer.isPlaying()) {
+                        //Set button background image as 'Pause'
+                        btn_chant_sound.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.ic_volume_off_24dp));
+                        //Create MediaPlayer object with raw resource 'om.mp3'
+                        mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.srila_prabhupada_japa);
+                        //Start playing mp3
+                        mPlayer.start();
+                        //Set player to be looping to continuously play om.mp3
+                        mPlayer.setLooping(true);
+                    } else {
+                        //When Om chant is playing
+                        if (mPlayer != null && mPlayer.isPlaying()) {
+                            //Set button background image as 'Play'
+                            btn_chant_sound.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.ic_volume_up_24dp));
+                            //Stop playing om.mp3
+                            mPlayer.stop();
+                        }
+                    }
+                } catch (IllegalStateException e) {
+                    // TODO Auto-generated catch block
+                    //  Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    //    Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
+
+    }
+
+    public void increaseChantCount(View v) {
+        currentCount++;
+        tv_todays_count.setText(""+currentCount);
+        int beadint=(currentCount)+(US.getTodaysBeads());
+
+        tv_todays_beads.setText("" + beadint);
+        Log.d("beads count: ", "" + beadint);
     }
 
     private void showQuote(UserInfo authenticatedUser) {
@@ -597,5 +760,17 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         },hour,minute1,false);
         timepick.setTitle("Select Time");
         timepick.show();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mPlayer != null && mPlayer.isPlaying()) {
+            //Set button background image as 'Play'
+            btn_chant_sound.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.ic_volume_up_24dp));
+
+            //Stop playing om.mp3
+            mPlayer.stop();
+        }
     }
 }

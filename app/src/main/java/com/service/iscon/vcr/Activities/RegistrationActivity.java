@@ -12,11 +12,10 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.AppCompatDrawableManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -46,19 +45,23 @@ import static android.Manifest.permission.READ_CONTACTS;
 public class RegistrationActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     EditText etName, etMobile, etPassword;
+    TextView tvGoogleauthtoken;
     Button btnSignUp;
     private AutoCompleteTextView mEmailView;
     private static final int REQUEST_READ_CONTACTS = 0;
     private View mProgressView;
     private View mLoginFormView;
     private ImageView imgLogoreg;
+    private TextView tv_profilepic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
         initView();
-        populateAutoComplete();
+
+
+        //populateAutoComplete();
     }
 
     private void initView() {
@@ -66,9 +69,12 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
         etName = (EditText) findViewById(R.id.et_reg_name);
         etMobile = (EditText) findViewById(R.id.et_reg_mobile);
         etPassword = (EditText) findViewById(R.id.et_reg_password);
+        tvGoogleauthtoken = (TextView) findViewById(R.id.tv_google_auth_token);
         btnSignUp = (Button) findViewById(R.id.btn_reg_sign_up);
         mEmailView = (AutoCompleteTextView) findViewById(R.id.et_reg_email);
+        tv_profilepic = (TextView) findViewById(R.id.tv_profilepic);
         etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.registration || id == EditorInfo.IME_NULL) {
@@ -88,6 +94,18 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
         mProgressView = findViewById(R.id.registration_progress);
         Drawable drawable = AppCompatDrawableManager.get().getDrawable(getApplicationContext(), R.drawable.ic_filter_vintage_black_24dp);
         imgLogoreg.setImageDrawable(drawable);
+        /*
+        Bundle bundleData =  getIntent().getExtras();
+        if(bundleData != null){
+            String Name = bundleData.getString("Name");
+            String email = bundleData.getString("email");
+            String personPhotoUrl = bundleData.getString("personPhotoUrl");
+            String accessToken = bundleData.getString("accessToken");
+            etName.setText(Name);
+            mEmailView.setText(email);
+            tvGoogleauthtoken.setText(accessToken);
+            tv_profilepic.setText(personPhotoUrl);
+        }*/
     }
 
     private void attemptRegistration() {
@@ -96,13 +114,16 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
         etPassword.setError(null);
         etName.setError(null);
         etMobile.setError(null);
+        tvGoogleauthtoken.setError(null);
+        tv_profilepic.setError(null);
 
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = etPassword.getText().toString();
         String name = etName.getText().toString();
-        String mobile = etMobile
-                .getText().toString();
+        String mobile = etMobile.getText().toString();
+        final String googleToken = tvGoogleauthtoken.getText().toString();
+        String profPic = tv_profilepic.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -154,8 +175,8 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            System.out.println("data from-----"+name+","+mobile+","+email+","+password);
-            UserInfoController UIC = UserInfoController.RegisterUser(RegistrationActivity.this,new UserInfo(name,mobile,email,password));
+            System.out.println("data from-----"+name+","+mobile+","+email+","+password+","+googleToken+""+profPic);
+            UserInfoController UIC = UserInfoController.RegisterUser(RegistrationActivity.this,new UserInfo(name,mobile,email,password,googleToken,profPic),"false");
             if (UIC == null) {
                 Log.e("Error", "UIC is null");
                 return;
@@ -173,6 +194,13 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
                     Intent i=new Intent(RegistrationActivity.this,HomeActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(i);
+
+                    // If User comUp with GooglePlus SignIn
+                    /*
+                    if(!googleToken.equals("0000000000")){
+                        SharedPrefs.save(RegistrationActivity.this,googleToken,SharedPrefs.accessTokenKey);
+                    }*/
+
                     finish();
 
                 }
@@ -198,13 +226,13 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
         int IS_PRIMARY = 1;
     }
 
-    private void populateAutoComplete() {
+    /*private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
         }
 
         getLoaderManager().initLoader(0, null, this);
-    }
+    }*/
 
 
     private boolean mayRequestContacts() {
@@ -232,7 +260,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
     /**
      * Callback received when a permissions request has been completed.
      */
-    @Override
+    /*@Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_READ_CONTACTS) {
@@ -240,7 +268,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
                 populateAutoComplete();
             }
         }
-    }
+    }*/
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

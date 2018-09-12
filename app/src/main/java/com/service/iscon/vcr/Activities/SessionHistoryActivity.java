@@ -1,12 +1,15 @@
 package com.service.iscon.vcr.Activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.service.iscon.vcr.Adapter.SessionHistoryAdapter;
@@ -24,10 +27,12 @@ import java.util.List;
 
 public class SessionHistoryActivity extends AppCompatActivity {
 
+    private static final int REQUEST_CODE = 1122;
     private List<SessionModel> sessionList = new ArrayList<>();
     private RecyclerView recyclerView;
     private SessionHistoryAdapter mAdapter;
     public Context con;
+    ImageButton ibAddChant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +42,26 @@ public class SessionHistoryActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         con=this;
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        ibAddChant=(ImageButton)findViewById(R.id.ib_add_chant);
+        ibAddChant.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i=new Intent(SessionHistoryActivity.this,OfflineChantActivity.class);
+                startActivityForResult(i,REQUEST_CODE);
+            }
+        });
         LoadData();
     }
 
-    private void LoadData() {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+            if(requestCode==REQUEST_CODE && resultCode== RESULT_OK){
+                LoadData();
+            }
+    }
 
-        String email="priyashirke21@gmail.com";
-        String password="priyanka";
+    private void LoadData() {
 
         MyDBHelper db = new MyDBHelper(SessionHistoryActivity.this);
         UserInfo _u = db.getUserInfo();
@@ -70,7 +88,6 @@ public class SessionHistoryActivity extends AppCompatActivity {
                     recyclerView.setAdapter(mAdapter);
                     // UpdateUI();
                 }else{
-
                     Toast.makeText(SessionHistoryActivity.this, "No chanting history available.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -83,4 +100,6 @@ public class SessionHistoryActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

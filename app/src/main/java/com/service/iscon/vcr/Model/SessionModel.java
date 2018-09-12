@@ -3,8 +3,9 @@ package com.service.iscon.vcr.Model;
 
 import java.io.Serializable;
 import java.text.ParseException;
-import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class SessionModel implements Serializable {
 
@@ -43,8 +44,8 @@ public class SessionModel implements Serializable {
     }
 
     public String getDateInISTFormat2(){
-        SimpleDateFormat sdf=new SimpleDateFormat("MM/dd/yyyy") ;
-        SimpleDateFormat sdf2=new SimpleDateFormat("dd-MMM") ;
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy/MM/dd") ;
+        SimpleDateFormat sdf2=new SimpleDateFormat("dd MMM yyyy") ;
         String s="";
         Date d=null;
         try {
@@ -54,7 +55,40 @@ public class SessionModel implements Serializable {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return date;
+        return s;
+    }
+
+    public String getDisplayDate(){
+
+        String[] a=(date.trim().split("/"));
+                if(isToday(a[2])){
+                    return "Today";
+                }else if(isYesterday(a[2])){
+                    return "Yesterday";
+                }else {
+                    return getDateInISTFormat2();
+                }
+    }
+
+    private boolean isToday(String day_date){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd");
+        Calendar cal = Calendar.getInstance();
+        String yesterday=dateFormat.format(cal.getTime());
+        if(day_date.equals(yesterday)){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isYesterday(String day_date){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd");
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        String yesterday=dateFormat.format(cal.getTime());
+        if(day_date.equals(yesterday)){
+            return true;
+        }
+        return false;
     }
 
     public void setDate(String date) {

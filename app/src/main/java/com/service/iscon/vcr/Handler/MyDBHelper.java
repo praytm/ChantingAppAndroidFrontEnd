@@ -34,6 +34,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
     private static final String COLUMN_CREATED_DATE = "create_date";
     private static final String COLUMN_LAST_LOGIN = "last_login";
     private static final String COLUMN_IS_ACTIVE = "is_active";
+    private static final String COLUMN_PROFILE_PIC = "profile_pic";
     public MyDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -54,7 +55,8 @@ public class MyDBHelper extends SQLiteOpenHelper {
                 + COLUMN_MOBILE + " TEXT,"
                 + COLUMN_CREATED_DATE + " TEXT,"
                 + COLUMN_LAST_LOGIN + " TEXT,"
-                + COLUMN_IS_ACTIVE + " TEXT"
+                + COLUMN_IS_ACTIVE + " INTEGER,"
+                + COLUMN_PROFILE_PIC + " TEXT "
                 + ")";
         sqLiteDatabase.execSQL(CREATE_CONTACTS_TABLE);
     }
@@ -91,6 +93,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
         values.put(COLUMN_CREATED_DATE, mUserInfo.getCreatedDate());
         values.put(COLUMN_LAST_LOGIN, mUserInfo.getLastLogin());
         values.put(COLUMN_IS_ACTIVE, mUserInfo.getIsActive());
+        values.put(COLUMN_PROFILE_PIC, mUserInfo.getProfilePic());
         // Inserting Row
         db.insert(TABLE_USER, null, values);
         db.close(); // Closing database connection
@@ -100,12 +103,12 @@ public class MyDBHelper extends SQLiteOpenHelper {
     public UserInfo getUserInfo(){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_USER, new String[] { COLUMN_ID,
-                        COLUMN_EMAIL,COLUMN_PASSWORD,COLUMN_NAME,COLUMN_MOBILE,COLUMN_CREATED_DATE,COLUMN_LAST_LOGIN,COLUMN_IS_ACTIVE}, COLUMN_ID + "=?",
+                        COLUMN_EMAIL,COLUMN_PASSWORD,COLUMN_NAME,COLUMN_MOBILE,COLUMN_CREATED_DATE,COLUMN_LAST_LOGIN,COLUMN_IS_ACTIVE,COLUMN_PROFILE_PIC}, COLUMN_ID + "=?",
                 new String[] { String.valueOf(1) }, null, null, null, null);
         if (cursor != null && cursor.getCount()>0) {
             cursor.moveToFirst();
             UserInfo mUserInfo = new UserInfo(Integer.parseInt(cursor.getString(0)),
-                    cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getInt(7));
+                    cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getInt(7),cursor.getString(8));
             // return contact
             return mUserInfo;
         }else{

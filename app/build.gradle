@@ -5,19 +5,19 @@ android {
         config {
             keyAlias 'ivcr'
             keyPassword 'harekrishna'
-            storeFile file('F:\\2. SuSh\\VCRMAIN\\KEYPrayTM/ivcr.jks')
+            storeFile file('D:\\praytm\\ivcr.jks')
             storePassword 'harekrishna'
         }
     }
     compileSdkVersion 24
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '27.0.3'
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.service.iscon.vcr"
         minSdkVersion 15
         targetSdkVersion 24
-        versionCode 4
-        versionName "1"
+        versionCode 8
+        versionName "2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled = true
@@ -28,6 +28,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
         debug {
             signingConfig signingConfigs.config
         }
@@ -44,26 +45,29 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:design:24.2.1'
-    compile 'com.android.support:support-v4:24.2.1'
-    compile 'com.android.support:support-vector-drawable:24.2.1'
-    compile 'com.google.android.gms:play-services-auth:10.0.1'
-    compile 'com.android.support:recyclerview-v7:24.1.1'
-   // compile 'org.apache.httpcomponents:httpcore:4.4.1'
-   // compile 'org.apache.httpcomponents:httpclient:4.5'
+    // implementation 'org.apache.httpcomponents:httpcore:4.4.1'
+    // implementation 'org.apache.httpcomponents:httpclient:4.5'
     // new added prathmesh
-    compile 'com.codemybrainsout.rating:ratingdialog:1.0.2'
-    //compile(name: 'easysocial-release', ext: 'aar')
-    //compile(name: 'social-login-release', ext: 'aar')
-    //compile(name: 'library-release', ext: 'aar')
-    compile 'com.balysv:material-ripple:1.0.2'
-    compile 'com.google.android.gms:play-services-plus:10.0.1'
-    //compile 'com.github.barteksc:android-pdf-viewer:2.0.3'
-    testCompile 'junit:junit:4.12'
+    //implementation(name: 'easysocial-release', ext: 'aar')
+    //implementation(name: 'social-login-release', ext: 'aar')
+    //implementation(name: 'library-release', ext: 'aar')
+    //implementation 'com.github.barteksc:android-pdf-viewer:2.0.3'
+    implementation 'com.android.support:appcompat-v7:24.2.1'
+    implementation 'com.android.support:design:24.2.1'
+    implementation 'com.android.support:support-v4:24.2.1'
+    implementation 'com.android.support:support-vector-drawable:24.2.1'
+    implementation 'com.google.android.gms:play-services-auth:9.0.1'
+    implementation 'com.android.support:recyclerview-v7:24.1.1'
+    implementation 'com.codemybrainsout.rating:ratingdialog:1.0.2'
+    implementation 'com.balysv:material-ripple:1.0.2'
+    implementation 'com.google.android.gms:play-services-plus:9.0.1'
+    //implementation 'com.google.firebase:firebase-core:11.8.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+    testImplementation 'junit:junit:4.12'
+    //implementation 'com.android.support:multidex:1.0.1'
 }
 apply plugin: 'com.google.gms.google-services'

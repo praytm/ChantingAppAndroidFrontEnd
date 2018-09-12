@@ -7,6 +7,8 @@
     android:fitsSystemWindows="true"
     tools:context="com.service.iscon.vcr.Activities.SessionHistoryActivity">
 
+    <include layout="@layout/content_session_history" />
+
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,10 +19,37 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:gravity="end"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_weight="0.8"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:text="My Chant"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/ib_add_chant"
+                    android:layout_weight="0.2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:background="#0000"
+                    android:clickable="true"
+                    app:srcCompat="@drawable/ic_add_circle_blue_24dp"
+                    android:tint="@color/colorWhite"/>
+
+            </LinearLayout>
+        </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
-
-    <include layout="@layout/content_session_history" />
 
 </android.support.design.widget.CoordinatorLayout>

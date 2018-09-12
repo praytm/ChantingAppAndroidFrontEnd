@@ -2,28 +2,21 @@ package com.service.iscon.vcr.Activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-import com.google.android.gms.plus.model.people.Person;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.v7.widget.AppCompatDrawableManager;
-import android.text.TextUtils;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -46,15 +39,15 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.service.iscon.vcr.Controller.UserInfoController;
 import com.service.iscon.vcr.Handler.MyDBHelper;
-import com.service.iscon.vcr.Handler.UserDB;
 import com.service.iscon.vcr.Helper.AsyncProcessListener;
 import com.service.iscon.vcr.Model.UserInfo;
 import com.service.iscon.vcr.R;
-import com.service.iscon.vcr.googleSignIn.GooglePlusSignInHelper;
-import com.service.iscon.vcr.googleSignIn.GoogleResponseListener;
+import com.service.iscon.vcr.Utils.SharedPrefs;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.Manifest.permission.READ_CONTACTS;
 
 /*import hp.harsh.library.interfaces.PermissionInterface;
 import hp.harsh.library.manager.PermissionRequest;
@@ -62,14 +55,11 @@ import hp.harsh.library.manager.PermissionResponse;
 import hp.harsh.library.utilbag.Permission;
 import hp.harsh.library.utilbag.PermissionCode;*/
 
-import static android.Manifest.permission.READ_CONTACTS;
-
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>/*,
-        GoogleApiClient.OnConnectionFailedListener,
-        GoogleResponseListener, PermissionInterface*/ {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>,
+        GoogleApiClient.OnConnectionFailedListener{
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -128,10 +118,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             // Build a GoogleApiClient with access to the Google Sign-In API and the
 // options specified by gso.
-            /*mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .enableAutoManage(this *//* FragmentActivity *//*, this *//* OnConnectionFailedListener *//*)
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this , this )
                     .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                    .build();*/
+                    .build();
 
 
             /*mGHelper = new GooglePlusSignInHelper(this, this);
@@ -151,9 +141,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }*/
 
             // Set Image
-            Drawable drawable = AppCompatDrawableManager.get().getDrawable(getApplicationContext(), R.drawable.ic_filter_vintage_black_24dp);
+           // Drawable drawable = AppCompatDrawableManager.get().getDrawable(getApplicationContext(), R.drawable.ic_filter_vintage_black_24dp);
             ivLogo = (ImageView) findViewById(R.id.imgLogo);
-            ivLogo.setImageDrawable(drawable);
+           // ivLogo.setImageDrawable(drawable);
 
             SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
             signInButton.setSize(SignInButton.SIZE_STANDARD);
@@ -166,7 +156,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             // Set up the login form.
             mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-            populateAutoComplete();
+            //populateAutoComplete();
 
             mPasswordView = (EditText) findViewById(R.id.password);
             mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -199,12 +189,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    private void populateAutoComplete() {
+    /*private void fff() {
         if (!mayRequestContacts()) {
             return;
         }
         getLoaderManager().initLoader(0, null, this);
-    }
+    }*/
 
     private boolean mayRequestContacts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
@@ -231,15 +221,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Callback received when a permissions request has been completed.
      */
-    /*@Override
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_READ_CONTACTS) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                populateAutoComplete();
+                //populateAutoComplete();
             }
         }
-    }*/
+    }
 
 
     /**
@@ -292,7 +282,7 @@ System.out.println("password :"+password);
             // mAuthTask = new UserLoginTask(email, password);
             //mAuthTask.execute((Void) null);
 
-            UserInfoController UIC = UserInfoController.AuthenticateUser(LoginActivity.this, email, password);
+            UserInfoController UIC = UserInfoController.AuthenticateUser(LoginActivity.this, email, password,false);
             if (UIC == null) {
                 Log.e("Error", "UIC is null");
                 return;
@@ -417,10 +407,10 @@ System.out.println("password :"+password);
         mEmailView.setAdapter(adapter);
     }
 
-    /*@Override
+    @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(this, "Google Client Connection Failed", Toast.LENGTH_SHORT).show();
-    }*/
+    }
 
     private void checkPhoneStatePermission() {
         /*new PermissionRequest(LoginActivity.this,
@@ -546,7 +536,10 @@ System.out.println("password :"+password);
                 String[] pieces = credential.split(":");
                 if (pieces[0].equals(mEmail)) {
                     // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
+                   // return pieces[1].equals(mPassword);
+                    Intent i=new Intent(LoginActivity.this,HomeActivity.class);
+                   // i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
                 }
             }
 
@@ -589,10 +582,10 @@ System.out.println("password :"+password);
         //mGHelper.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        /*if (requestCode == RC_SIGN_IN) {
+        if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
-        }*/
+        }
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
@@ -601,11 +594,98 @@ System.out.println("password :"+password);
             if (result.isSuccess()) {
                 // Signed in successfully, show authenticated UI.
                 GoogleSignInAccount acct = result.getSignInAccount();
-                String email = acct.getEmail();
-                String Name = acct.getGivenName();
 
-                Toast.makeText(LoginActivity.this, "Login Success! \nEmail:" + email + "\nName:" + Name, Toast.LENGTH_SHORT).show();
-                //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+                final String email = acct.getEmail();
+                final String Name = acct.getGivenName();
+                final String personPhotoUrl = acct.getPhotoUrl().toString();
+                final String accessToken = acct.getId().toString();
+
+                /*Toast.makeText(LoginActivity.this, "Login Success! \nEmail:" + email + "\nName:" + Name
+                        +"/n Photo URL"+personPhotoUrl, Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Access Token : " +accessToken
+                        , Toast.LENGTH_SHORT).show();*/
+
+                // check the saveed AccessToken From Local db with above access Toeken
+                String data = SharedPrefs.getString(LoginActivity.this,SharedPrefs.accessTokenKey);
+                if(!data.equals("")){
+                    Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+
+                //Initially Check for Login
+                UserInfoController UIC1 = UserInfoController.AuthenticateUser(LoginActivity.this, email,accessToken,true);
+                if (UIC1 == null) {
+                    Log.e("Error", "UIC is null");
+                    return;
+                }
+                //Handling Response of service
+                UIC1.setOnUserAuthentication(new AsyncProcessListener<Object>() {
+                    @Override
+                    public void ProcessFinished(Object Result) {
+                        UserInfo AuthenticatedUser = (UserInfo) Result;
+                        MyDBHelper db = new MyDBHelper(LoginActivity.this);
+                        UserInfo _u = db.getUserInfo();
+                        db.clearUser();
+                        db.addUser(AuthenticatedUser);
+
+
+                        List<UserInfo> listUsers = new ArrayList();
+                        listUsers = db.getAllContacts();
+                        showProgress(false);
+                        Toast.makeText(LoginActivity.this, "Welcome " + AuthenticatedUser.getFullName().toString(), Toast.LENGTH_SHORT).show();
+                        finish();
+                        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+                        startActivity(i);
+                    }
+
+                    @Override
+                    public void ProcessFailed(Exception E) { //Login Not Success
+                        //Else do the Registration
+                        UserInfoController UIC2 = UserInfoController.RegisterUser(LoginActivity.this,new UserInfo(Name,email,accessToken,accessToken,personPhotoUrl), "true");
+                        if (UIC2 == null) {
+                            Log.e("Error", "UIC is null");
+                            return;
+                        }
+                        //Handling Response of service
+                        UIC2.setOnUserRegistration(new AsyncProcessListener<Object>() {
+                            @Override
+                            public void ProcessFinished(Object Result) {
+                                UserInfo AuthenticatedUser = (UserInfo) Result;
+                                MyDBHelper db = new MyDBHelper(LoginActivity.this);
+                                db.clearUser();
+                                db.addUser(AuthenticatedUser);
+                                showProgress(false);
+                                Toast.makeText(LoginActivity.this,"Welcome "+AuthenticatedUser.getFullName().toString(),Toast.LENGTH_SHORT).show();
+                                Intent i=new Intent(LoginActivity.this,HomeActivity.class);
+                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(i);
+
+                                /*TextView tvGoogleauthtoken = (TextView) findViewById(R.id.tv_google_auth_token);
+                                final String googletoken = tvGoogleauthtoken.getText().toString();
+                                // If User comUp with GooglePlus SignIn
+                                if(!googletoken.equals("9060200454554")){
+                                    SharedPrefs.save(LoginActivity.this,googletoken,SharedPrefs.accessTokenKey);
+                                }*/
+
+                                finish();
+
+                            }
+
+                            @Override
+                            public void ProcessFailed(Exception E) { //Unsuccess Registration
+                                String Resp = E.getMessage();
+                                Toast.makeText(LoginActivity.this,Resp,Toast.LENGTH_SHORT).show();
+                                showProgress(false);
+                            }
+                        });
+                    }
+
+                });
+
+
+
+                /*//mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
                 //updateUI(true);
                 UserInfo AuthenticatedUser = new UserInfo(000, Name, email, "00000");
                 MyDBHelper db = new MyDBHelper(LoginActivity.this);
@@ -616,10 +696,14 @@ System.out.println("password :"+password);
 
                 List<UserInfo> listUsers = new ArrayList();
                 listUsers = db.getAllContacts();
-                showProgress(false);
-                finish();
-                Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-                startActivity(i);
+                showProgress(false);*/
+                /*finish();
+                Intent i = new Intent(LoginActivity.this, RegistrationActivity.class);
+                i.putExtra("email",email);
+                i.putExtra("Name",Name);
+                i.putExtra("personPhotoUrl",personPhotoUrl);
+                i.putExtra("accessToken",accessToken);
+                startActivity(i);*/
 
             } else {
                 Toast.makeText(LoginActivity.this, "Google Sign in Failed", Toast.LENGTH_SHORT).show();

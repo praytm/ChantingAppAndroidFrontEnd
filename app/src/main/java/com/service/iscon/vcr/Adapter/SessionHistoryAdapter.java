@@ -53,11 +53,18 @@ public class SessionHistoryAdapter  extends RecyclerView.Adapter<SessionHistoryA
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         SessionModel sessionModel = SessionList.get(position);
-        holder.date.setText(""+sessionModel.getDateInIST());
+        //holder.date.setText(""+sessionModel.getDateInIST());
+        holder.date.setText(""+sessionModel.getDisplayDate());
         // holder.title.setText(""+sessionModel.getDateInISTFormat2());
 //        holder.genre.setText(sessionModel.getStartTimeInIST());
         holder.beads.setText("Beads: "+String.valueOf(sessionModel.getBeads()));
-        holder.round.setText("Rounds: "+String.valueOf(sessionModel.getBeads()/108));
+        int r=sessionModel.getBeads()/108;
+        if(r>0) {
+            holder.round.setVisibility(View.VISIBLE);
+            holder.round.setText("Rounds: " + String.valueOf(r));
+        }else {
+            holder.round.setVisibility(View.GONE);
+        }
   /*      switch(position % 4){
             case 0:holder.icon.setColorFilter(ContextCompat.getColor(mContext,R.color.colorAccent), android.graphics.PorterDuff.Mode.MULTIPLY);
                 break;
